@@ -1,9 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mail, MapPin, Instagram, Twitter } from 'lucide-react';
 import SEO from '../components/SEO';
+import toast from 'react-hot-toast';
 
 const Contact = () => {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Basic validation
+        if (!formData.name || !formData.email || !formData.message) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
+
+        if (!formData.email.includes('@')) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        // Simulate API call
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            toast.success('Message sent! I\'ll get back to you soon.');
+            setFormData({
+                name: '',
+                email: '',
+                subject: '',
+                message: ''
+            });
+        } catch (error) {
+            toast.error('Something went wrong. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <section className="pt-32 pb-20 px-6 bg-cream min-h-screen">
             <SEO

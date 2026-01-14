@@ -1,7 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const Newsletter = () => {
+    const [email, setEmail] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!email) {
+            toast.error('Please enter your email address');
+            return;
+        }
+        if (!email.includes('@')) {
+            toast.error('Please enter a valid email address');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            toast.success('Thanks for joining the journey! 📬');
+            setEmail('');
+        } catch (error) {
+            toast.error('Subscription failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <section className="py-20 px-6 bg-cream">
             <div className="container mx-auto max-w-[800px]">
@@ -24,14 +52,20 @@ const Newsletter = () => {
                             Join the creative journey. I send out a collection of poems, essays, and thoughts once a week—no spam, just art.
                         </p>
 
-                        <form className="w-full max-w-md flex flex-col md:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
+                        <form className="w-full max-w-md flex flex-col md:flex-row gap-4" onSubmit={handleSubmit}>
                             <input
                                 type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="your@email.com"
                                 className="flex-grow px-6 py-4 rounded-full border-2 border-magenta/30 focus:border-magenta focus:outline-none focus:ring-4 focus:ring-magenta/10 transition-all bg-white text-charcoal font-medium placeholder:text-charcoal/40"
                             />
-                            <button className="bg-magenta text-white font-heading font-semibold px-8 py-4 rounded-full hover:bg-magenta-light hover:scale-105 transition-all duration-300 shadow-md whitespace-nowrap">
-                                Subscribe
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="bg-magenta text-white font-heading font-semibold px-8 py-4 rounded-full hover:bg-magenta/90 hover:scale-105 transition-all duration-300 shadow-md whitespace-nowrap disabled:bg-magenta/50 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? 'Joining...' : 'Subscribe'}
                             </button>
                         </form>
 

@@ -1,3 +1,10 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { ArrowLeft, PenTool, FileText, Heart } from 'lucide-react';
+import { client, formatDate } from '../lib/sanity';
+import { getWritingsByCategoryQuery } from '../lib/queries';
+import SEO from '../components/SEO';
+import WritingCard from '../components/WritingCard';
 import { CardSkeleton } from '../components/LoadingSkeleton';
 
 const Category = () => {

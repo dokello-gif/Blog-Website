@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, PenTool, BookOpen, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { client } from '../lib/sanity';
 
@@ -52,7 +52,7 @@ const Hero = () => {
         }
     };
 
-    if (loading) return null; // Or a simple skeleton
+    if (loading) return null;
 
     return (
         <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-cream">
@@ -94,33 +94,56 @@ const Hero = () => {
                                 to={`/article/${featuredArticle.slug}`}
                                 className="group bg-magenta text-white font-heading font-bold text-lg px-10 py-5 rounded-2xl hover:bg-magenta/90 hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-magenta/20 flex items-center justify-center gap-3"
                             >
-                                <PenTool size={180} strokeWidth={1} />
-                            </motion.div>
-                        </div>
+                                Read Story <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+                            </Link>
+                        ) : (
+                            <Link
+                                to="/category/all"
+                                className="group bg-magenta text-white font-heading font-bold text-lg px-10 py-5 rounded-2xl hover:bg-magenta/90 hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-magenta/20 flex items-center justify-center gap-3"
+                            >
+                                Explore Stories <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+                            </Link>
+                        )}
+                        <Link
+                            to="/about"
+                            className="bg-white text-charcoal font-heading font-bold text-lg px-10 py-5 rounded-2xl border border-charcoal/10 hover:border-magenta/20 hover:bg-cream/50 transition-all duration-300 flex items-center justify-center gap-3"
+                        >
+                            About the Author
+                        </Link>
+                    </motion.div>
 
                     {/* Floating details */}
-                    <motion.div
-                        className="absolute top-10 right-10 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-                    >
-                        <BookOpen size={32} className="text-cyan mb-2" />
-                        <div className="h-1 w-8 bg-cyan rounded-full"></div>
-                    </motion.div>
+                    <div className="absolute hidden xl:block top-0 right-0 w-1/3 h-full pointer-events-none">
+                        <motion.div
+                            className="absolute top-10 right-10 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
+                            animate={{ y: [0, 10, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                        >
+                            <BookOpen size={32} className="text-cyan mb-2" />
+                            <div className="h-1 w-8 bg-cyan rounded-full"></div>
+                        </motion.div>
 
-                    <motion.div
-                        className="absolute bottom-12 left-12 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
-                        animate={{ y: [0, -10, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
-                    >
-                        <Heart size={32} className="text-magenta mb-2" />
-                        <div className="h-1 w-8 bg-magenta rounded-full"></div>
-                    </motion.div>
+                        <motion.div
+                            className="absolute bottom-12 right-20 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
+                        >
+                            <Heart size={32} className="text-magenta mb-2" />
+                            <div className="h-1 w-8 bg-magenta rounded-full"></div>
+                        </motion.div>
+
+                        <motion.div
+                            className="absolute top-1/2 right-40 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg"
+                            animate={{ x: [0, 10, 0] }}
+                            transition={{ duration: 6, repeat: Infinity, delay: 2 }}
+                        >
+                            <PenTool size={32} className="text-yellow mb-2" />
+                            <div className="h-1 w-8 bg-yellow rounded-full"></div>
+                        </motion.div>
+                    </div>
                 </motion.div>
-
             </div>
-        </div>
-        </section >
+        </section>
     );
 };
 

@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { client } from '../lib/sanity';
 import { searchWritingsQuery } from '../lib/queries';
 

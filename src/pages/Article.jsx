@@ -1,3 +1,11 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { ArrowLeft, Calendar, Clock, Heart, Share2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { client, formatDate } from '../lib/sanity';
+import { getWritingBySlugQuery } from '../lib/queries';
+import SEO from '../components/SEO';
 import { ArticleSkeleton } from '../components/LoadingSkeleton';
 
 const Article = () => {
@@ -6,7 +14,16 @@ const Article = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Reading progress bar setup
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
+
     useEffect(() => {
+        setLoading(true);
         client.fetch(getWritingBySlugQuery, { slug: id })
             .then((data) => {
                 setArticle(data);
@@ -38,10 +55,16 @@ const Article = () => {
 
     return (
         <article className="pt-32 pb-20 px-6">
+            {/* Reading Progress Bar */}
+            <motion.div
+                className="fixed top-0 left-0 right-0 h-1.5 bg-magenta z-[60] origin-left"
+                style={{ scaleX }}
+            />
+
             <SEO
                 title={article.title}
                 description={article.excerpt}
-                keywords={`creative writing, ${article.category?.title.toLowerCase()}, ${article.title.toLowerCase()}`}
+                keywords={`creative writing, ${article.category?.title?.toLowerCase()}, ${article.title.toLowerCase()}`}
             />
             <div className="container mx-auto max-w-[700px]">
                 {/* Back Link */}

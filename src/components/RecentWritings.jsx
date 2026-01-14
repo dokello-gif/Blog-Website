@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from 'react';
+import { client, formatDate } from '../lib/sanity';
+import { getAllWritingsQuery } from '../lib/queries';
+import WritingCard from './WritingCard';
 import { CardSkeleton } from './LoadingSkeleton';
 
 const RecentWritings = () => {
