@@ -11,65 +11,51 @@ const Contact = () => {
                 description="Get in touch with David. Send a message, ask a question, or just say hello."
             />
             <div className="container mx-auto max-w-[1000px]">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
-                >
-                    <h1 className="text-4xl md:text-5xl font-bold font-heading text-charcoal mb-6">
-                        Get in <span className="text-magenta">Touch</span>
-                    </h1>
-                    <p className="text-xl text-charcoal/70 max-w-2xl mx-auto">
-                        Have a question, a project in mind, or just want to discuss the nuances of a rainy Tuesday? I'd love to hear from you.
-                    </p>
-                </motion.div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     {/* Contact Info */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="bg-white p-8 rounded-2xl shadow-sm border border-magenta/10"
+                        transition={{ duration: 0.6 }}
                     >
-                        <h2 className="text-2xl font-bold font-heading text-charcoal mb-8">Contact Information</h2>
+                        <h1 className="text-4xl md:text-5xl font-bold font-heading text-charcoal mb-6">
+                            Let's start a <span className="text-magenta">conversation</span>.
+                        </h1>
+                        <p className="text-lg text-charcoal/70 mb-12">
+                            Whether you have a question about my writing, want to collaborate on a project, or just want to say hello, I'd love to hear from you.
+                        </p>
 
                         <div className="space-y-8">
                             <div className="flex items-start gap-4">
-                                <div className="p-3 bg-magenta/5 rounded-full text-magenta">
+                                <div className="w-12 h-12 rounded-2xl bg-cyan/10 flex items-center justify-center text-cyan shrink-0">
                                     <Mail size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-charcoal mb-1">Email</h3>
-                                    <a href="mailto:hello@withdavid.com" className="text-charcoal/70 hover:text-magenta transition-colors">
-                                        hello@withdavid.com
-                                    </a>
+                                    <h3 className="font-heading font-bold text-charcoal mb-1">Email</h3>
+                                    <p className="text-charcoal/70">hello@withdavid.com</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start gap-4">
-                                <div className="p-3 bg-cyan/5 rounded-full text-cyan">
+                                <div className="w-12 h-12 rounded-2xl bg-magenta/10 flex items-center justify-center text-magenta shrink-0">
                                     <MapPin size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-charcoal mb-1">Location</h3>
-                                    <p className="text-charcoal/70">
-                                        Nairobi, Kenya
-                                    </p>
+                                    <h3 className="font-heading font-bold text-charcoal mb-1">Location</h3>
+                                    <p className="text-charcoal/70">Digital Garden / Earth</p>
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="pt-8 border-t border-charcoal/10">
-                                <h3 className="font-bold text-charcoal mb-4">Follow Me</h3>
-                                <div className="flex gap-4">
-                                    <a href="#" className="p-3 bg-charcoal/5 rounded-full text-charcoal hover:bg-magenta hover:text-white transition-all duration-300">
-                                        <Instagram size={20} />
-                                    </a>
-                                    <a href="#" className="p-3 bg-charcoal/5 rounded-full text-charcoal hover:bg-cyan hover:text-white transition-all duration-300">
-                                        <Twitter size={20} />
-                                    </a>
-                                </div>
+                        <div className="mt-12">
+                            <h3 className="font-heading font-bold text-charcoal mb-4">Follow My Journey</h3>
+                            <div className="flex gap-4">
+                                <a href="#" className="w-10 h-10 rounded-full bg-charcoal text-white flex items-center justify-center hover:bg-magenta transition-colors">
+                                    <Instagram size={20} />
+                                </a>
+                                <a href="#" className="w-10 h-10 rounded-full bg-charcoal text-white flex items-center justify-center hover:bg-cyan transition-colors">
+                                    <Twitter size={20} />
+                                </a>
                             </div>
                         </div>
                     </motion.div>
@@ -78,53 +64,66 @@ const Contact = () => {
                     <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-magenta/5 border border-magenta/10"
                     >
-                        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label htmlFor="name" className="text-sm font-bold text-charcoal uppercase tracking-wider">Name</label>
+                                    <label className="text-sm font-bold text-charcoal ml-2">Your Name</label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        className="w-full bg-white border-2 border-charcoal/10 rounded-lg px-4 py-3 focus:outline-none focus:border-magenta transition-colors"
-                                        placeholder="John Doe"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        className="w-full bg-cream/50 border border-charcoal/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-magenta focus:ring-1 focus:ring-magenta transition-all"
+                                        placeholder="Jon Doe"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-bold text-charcoal uppercase tracking-wider">Email</label>
+                                    <label className="text-sm font-bold text-charcoal ml-2">Email Address</label>
                                     <input
                                         type="email"
-                                        id="email"
-                                        className="w-full bg-white border-2 border-charcoal/10 rounded-lg px-4 py-3 focus:outline-none focus:border-magenta transition-colors"
-                                        placeholder="john@example.com"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="w-full bg-cream/50 border border-charcoal/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all"
+                                        placeholder="jon@example.com"
                                     />
                                 </div>
                             </div>
-
                             <div className="space-y-2">
-                                <label htmlFor="subject" className="text-sm font-bold text-charcoal uppercase tracking-wider">Subject</label>
+                                <label className="text-sm font-bold text-charcoal ml-2">Subject</label>
                                 <input
                                     type="text"
-                                    id="subject"
-                                    className="w-full bg-white border-2 border-charcoal/10 rounded-lg px-4 py-3 focus:outline-none focus:border-magenta transition-colors"
-                                    placeholder="Just saying hi!"
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleChange}
+                                    className="w-full bg-cream/50 border border-charcoal/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-magenta focus:ring-1 focus:ring-magenta transition-all"
+                                    placeholder="How can I help you?"
                                 />
                             </div>
-
                             <div className="space-y-2">
-                                <label htmlFor="message" className="text-sm font-bold text-charcoal uppercase tracking-wider">Message</label>
+                                <label className="text-sm font-bold text-charcoal ml-2">Message</label>
                                 <textarea
-                                    id="message"
                                     rows="5"
-                                    className="w-full bg-white border-2 border-charcoal/10 rounded-lg px-4 py-3 focus:outline-none focus:border-magenta transition-colors resize-none"
-                                    placeholder="Your message here..."
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    className="w-full bg-cream/50 border border-charcoal/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-all resize-none"
+                                    placeholder="Tell me more..."
                                 ></textarea>
                             </div>
-
-                            <button type="submit" className="w-full bg-magenta text-white font-heading font-bold text-lg px-8 py-4 rounded-lg hover:bg-magenta/90 hover:scale-[1.02] transition-all duration-300 shadow-lg flex items-center justify-center gap-2">
-                                <Send size={20} />
-                                Send Message
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full bg-magenta text-white font-heading font-bold py-5 rounded-2xl hover:bg-magenta/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg shadow-magenta/20 disabled:bg-magenta/50 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? 'Sending...' : (
+                                    <>
+                                        Send Message <Send size={20} />
+                                    </>
+                                )}
                             </button>
                         </form>
                     </motion.div>

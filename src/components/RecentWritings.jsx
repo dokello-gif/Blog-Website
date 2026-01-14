@@ -1,10 +1,34 @@
-import React from 'react';
-import WritingCard from './WritingCard';
-import { writings } from '../data/writings';
+import { CardSkeleton } from './LoadingSkeleton';
 
 const RecentWritings = () => {
-    // Get top 6 for homepage
-    const recentWritings = writings.slice(0, 6);
+    const [writings, setWritings] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        client.fetch(getAllWritingsQuery)
+            .then((data) => {
+                setWritings(data.slice(0, 6)); // Get top 6
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching writings:', error);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) {
+        return (
+            <section className="py-20 px-6 bg-cream border-t border-white/50">
+                <div className="container mx-auto max-w-[1200px]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3, 4, 5, 6].map((n) => (
+                            <CardSkeleton key={n} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="py-20 px-6 bg-cream border-t border-white/50">
@@ -13,25 +37,22 @@ const RecentWritings = () => {
                     <h2 className="text-3xl md:text-4xl font-bold font-heading text-charcoal">
                         Recent Writings
                     </h2>
-                    <a href="#" className="hidden md:block text-magenta font-semibold hover:text-charcoal transition-colors">
-                        View all stories →
-                    </a>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {recentWritings.map((writing, index) => (
+                    {writings.map((writing, index) => (
                         <WritingCard
-                            key={writing.id}
-                            {...writing}
+                            key={writing._id}
+                            id={writing.slug}
+                            title={writing.title}
+                            excerpt={writing.excerpt}
+                            category={writing.category?.title || 'Uncategorized'}
+                            date={formatDate(writing.publishedAt)}
+                            readTime={writing.readTime}
+                            engagement={writing.engagement}
                             delay={index * 0.1}
                         />
                     ))}
-                </div>
-
-                <div className="mt-12 text-center md:hidden">
-                    <button className="bg-white text-magenta border-2 border-magenta font-heading font-semibold px-8 py-3 rounded-full hover:bg-magenta hover:text-white transition-all duration-300">
-                        View all stories
-                    </button>
                 </div>
             </div>
         </section>

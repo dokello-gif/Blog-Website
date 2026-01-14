@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Search, X, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { writings } from '../data/writings';
+import { client } from '../lib/sanity';
+import { searchWritingsQuery } from '../lib/queries';
 
 const SearchOverlay = ({ isOpen, onClose }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (searchTerm.trim() === '') {
             setResults([]);
+            setLoading(false);
             return;
         }
 
-        const filtered = writings.filter(writing =>
-            writing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            writing.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            writing.category.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setResults(filtered);
+        setLoading(true);
+        const timer = setTimeout(() => {
+            client.fetch(searchWritingsQuery, {
+                searchTerm: `*${searchTerm}*`
+            })
+                .then((data) => {
+                    setResults(data);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error('Search error:', error);
+                    setLoading(false);
+                });
+        }, 300);
+
+        return () => clearTimeout(timer);
     }, [searchTerm]);
 
     // Close on Escape key
@@ -75,7 +84,13 @@ const SearchOverlay = ({ isOpen, onClose }) => {
 
                         {/* Results */}
                         <div className="flex-grow overflow-y-auto pb-20 scrollbar-hide">
-                            {searchTerm && results.length === 0 && (
+                            {loading && (
+                                <div className="text-center text-charcoal/50 py-12">
+                                    Searching...
+                                </div>
+                            )}
+
+                            {!loading && searchTerm && results.length === 0 && (
                                 <div className="text-center text-charcoal/50 py-12">
                                     No results found for "{searchTerm}"
                                 </div>
@@ -84,22 +99,19 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                             <div className="space-y-6">
                                 {results.map((result, index) => (
                                     <motion.div
-                                        key={result.id}
+                                        key={result._id}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
                                         <Link
-                                            to={`/article/${result.id}`}
+                                            to={`/article/${result.slug}`}
                                             onClick={onClose}
                                             className="group block bg-white p-6 rounded-2xl hover:bg-white border border-transparent hover:border-magenta/20 hover:shadow-lg transition-all"
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <span className="text-xs font-bold uppercase tracking-wider text-magenta">
-                                                    {result.category}
-                                                </span>
-                                                <span className="text-charcoal/40 text-sm">
-                                                    {result.date}
+                                                    {result.category?.title || 'Uncategorized'}
                                                 </span>
                                             </div>
                                             <h3 className="text-xl font-bold font-heading text-charcoal mb-2 group-hover:text-magenta transition-colors">

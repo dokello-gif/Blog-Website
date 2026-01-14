@@ -8,6 +8,7 @@ import Article from './pages/Article';
 import Category from './pages/Category';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/contact" element={<Contact />} /> {/* Added route for Contact page */}
             {/* Fallback for prototype linking */}
             <Route path="/article" element={<Article />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

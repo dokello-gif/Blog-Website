@@ -1,41 +1,60 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import WritingCard from '../components/WritingCard';
-import { ArrowLeft, Heart, FileText, PenTool } from 'lucide-react';
-import { writings } from '../data/writings';
-import SEO from '../components/SEO';
+import { CardSkeleton } from '../components/LoadingSkeleton';
 
 const Category = () => {
     const { categoryId } = useParams();
+    const [writings, setWritings] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Capitalize first letter
-    const categoryTitle = categoryId ? categoryId.charAt(0).toUpperCase() + categoryId.slice(1) : 'Categories';
-
-    const categoryIcons = {
-        'poetry': { icon: Heart, color: 'text-magenta', bg: 'bg-magenta/5', border: 'border-magenta' },
-        'blog': { icon: FileText, color: 'text-yellow', bg: 'bg-yellow/5', border: 'border-yellow' },
-        'essays': { icon: PenTool, color: 'text-cyan', bg: 'bg-cyan/5', border: 'border-cyan' }
+    // Map plural URLs to singular category slugs
+    const categorySlugMap = {
+        'poetry': 'poetry',
+        'essays': 'essay',
+        'blog': 'blog'
     };
 
-    const style = categoryIcons[categoryId] || categoryIcons['poetry'];
-    const Icon = style.icon;
+    const categoryTitleMap = {
+        'poetry': 'Poetry',
+        'essays': 'Essays',
+        'blog': 'Blog Posts'
+    };
 
-    // Filtering Logic
-    const filteredWritings = writings.filter(writing => {
-        // Normalize IDs and Categories
-        // categoryId: 'poetry', 'blog', 'essays'
-        // writing.category: 'Poetry', 'Blog', 'Essay'
+    const categorySlug = categorySlugMap[categoryId] || categoryId;
+    const categoryTitle = categoryTitleMap[categoryId] || categoryId;
 
-        const catId = categoryId ? categoryId.toLowerCase() : '';
-        const writingCat = writing.category.toLowerCase();
+    useEffect(() => {
+        client.fetch(getWritingsByCategoryQuery, { categorySlug })
+            .then((data) => {
+                setWritings(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching category writings:', error);
+                setLoading(false);
+            });
+    }, [categorySlug]);
 
-        if (catId === 'poetry') return writingCat === 'poetry';
-        if (catId === 'blog') return writingCat === 'blog';
-        // Map 'essays' (plural ID) to 'essay' (singular data category)
-        if (catId === 'essays') return writingCat === 'essay';
+    const getCategoryIcon = () => {
+        switch (categoryId) {
+            case 'poetry': return <PenTool size={32} />;
+            case 'essays': return <FileText size={32} />;
+            case 'blog': return <Heart size={32} />;
+            default: return <FileText size={32} />;
+        }
+    };
 
-        return true; // Show all if no valid category matched (fallback)
-    });
+    if (loading) {
+        return (
+            <section className="pt-32 pb-20 px-6 bg-cream min-h-screen">
+                <div className="container mx-auto max-w-[1200px]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3].map((n) => (
+                            <CardSkeleton key={n} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="pt-32 pb-20 px-6 bg-cream min-h-screen">
@@ -47,38 +66,45 @@ const Category = () => {
                 {/* Back Link */}
                 <Link to="/" className="inline-flex items-center gap-2 text-cyan font-medium hover:text-magenta transition-colors mb-12 group">
                     <ArrowLeft size={20} className="transition-transform group-hover:-translate-x-1" />
-                    Back to all stories
+                    Back to home
                 </Link>
 
-                {/* Header */}
-                <div className={`mb-16 p-8 rounded-2xl ${style.bg} border ${style.border} border-opacity-20 flex items-start md:items-center gap-6 md:gap-8`}>
-                    <div className={`p-4 bg-white rounded-full shadow-sm ${style.color}`}>
-                        <Icon size={40} />
+                {/* Category Header */}
+                <div className="mb-16 text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-magenta/10 text-magenta mb-6">
+                        {getCategoryIcon()}
                     </div>
-                    <div>
-                        <h1 className="text-4xl md:text-5xl font-bold font-heading text-charcoal mb-4">
-                            {categoryTitle}
-                        </h1>
-                        <p className="text-lg text-charcoal/70 max-w-2xl">
-                            A curated collection of {categoryTitle.toLowerCase()} pieces. Explore thoughts, feelings, and creative expressions.
-                        </p>
-                    </div>
+                    <h1 className="text-4xl md:text-5xl font-bold font-heading text-charcoal mb-4">
+                        {categoryTitle}
+                    </h1>
+                    <p className="text-xl text-charcoal/70 max-w-2xl mx-auto">
+                        {writings.length} {writings.length === 1 ? 'piece' : 'pieces'} in this collection
+                    </p>
                 </div>
 
-                {/* Grid */}
-                {filteredWritings.length > 0 ? (
+                {/* Writings Grid */}
+                {writings.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredWritings.map((writing, index) => (
+                        {writings.map((writing, index) => (
                             <WritingCard
-                                key={writing.id}
-                                {...writing}
+                                key={writing._id}
+                                id={writing.slug}
+                                title={writing.title}
+                                excerpt={writing.excerpt}
+                                category={writing.category?.title || 'Uncategorized'}
+                                date={formatDate(writing.publishedAt)}
+                                readTime={writing.readTime}
+                                engagement={writing.engagement}
                                 delay={index * 0.1}
                             />
                         ))}
                     </div>
                 ) : (
                     <div className="text-center py-20">
-                        <p className="text-xl text-charcoal/60">No writings found in this category yet.</p>
+                        <p className="text-charcoal/60 text-lg">No writings found in this category yet.</p>
+                        <Link to="/" className="inline-block mt-6 text-magenta hover:underline">
+                            Explore all writings
+                        </Link>
                     </div>
                 )}
             </div>

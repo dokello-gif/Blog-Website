@@ -1,28 +1,33 @@
-import React from 'react';
-import { ArrowLeft, Clock, Heart, Share2, Calendar } from 'lucide-react';
-import { Link, useParams, Navigate } from 'react-router-dom';
-import { writings } from '../data/writings';
-import { motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
-import SEO from '../components/SEO';
+import { ArticleSkeleton } from '../components/LoadingSkeleton';
 
 const Article = () => {
     const { id } = useParams();
+    const [article, setArticle] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Find the writing by ID
-    const article = writings.find(w => w.id === id);
+    useEffect(() => {
+        client.fetch(getWritingBySlugQuery, { slug: id })
+            .then((data) => {
+                setArticle(data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error('Error fetching article:', err);
+                setError(err.message);
+                setLoading(false);
+            });
+    }, [id]);
 
-    // If not found (or sample/featured linking), default to first or redirect
-    if (!article && id === 'featured') {
-        const featuredArticle = writings.find(w => w.id === 'finding-beauty-in-chaos') || writings[0];
-        return <ArticleContent article={featuredArticle} />;
+    if (loading) {
+        return (
+            <div className="pt-32 pb-20 px-6">
+                <ArticleSkeleton />
+            </div>
+        );
     }
 
-    if (!article && id === 'sample') {
-        return <ArticleContent article={writings[0]} />;
-    }
-
-    if (!article) {
+    if (error || !article) {
         return (
             <div className="pt-32 px-6 text-center">
                 <h1 className="text-2xl font-bold font-heading text-charcoal mb-4">Article Not Found</h1>
@@ -31,16 +36,12 @@ const Article = () => {
         );
     }
 
-    return <ArticleContent article={article} />;
-};
-
-const ArticleContent = ({ article }) => {
     return (
         <article className="pt-32 pb-20 px-6">
             <SEO
                 title={article.title}
                 description={article.excerpt}
-                keywords={`creative writing, ${article.category.toLowerCase()}, ${article.title.toLowerCase()}`}
+                keywords={`creative writing, ${article.category?.title.toLowerCase()}, ${article.title.toLowerCase()}`}
             />
             <div className="container mx-auto max-w-[700px]">
                 {/* Back Link */}
@@ -57,7 +58,7 @@ const ArticleContent = ({ article }) => {
                     className="mb-10"
                 >
                     <div className="inline-block px-3 py-1 bg-magenta text-white text-xs font-bold uppercase tracking-wider rounded-full mb-6">
-                        {article.category}
+                        {article.category?.title || 'Uncategorized'}
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-bold font-heading text-charcoal mb-8 leading-tight">
@@ -67,7 +68,7 @@ const ArticleContent = ({ article }) => {
                     <div className="flex items-center gap-6 text-sm text-charcoal/60 font-medium border-b border-magenta/10 pb-8">
                         <div className="flex items-center gap-2">
                             <Calendar size={16} />
-                            <span>{article.date}</span>
+                            <span>{formatDate(article.publishedAt)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Clock size={16} />

@@ -1,0 +1,25 @@
+{
+    "name": "with-david-studio",
+    "version": "1.0.0",
+    "description": "Sanity Studio for With David Blog",
+    "main": "index.js",
+    "scripts": {
+        "dev": "sanity dev",
+        "start": "sanity start",
+        "build": "sanity build"
+    },
+    "keywords": [
+        "sanity"
+    ],
+    "author": "David",
+    "license": "MIT",
+    "dependencies": {
+        "sanity": "^3.62.5",
+        "styled-components": "^6.1.13",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@sanity/types": "^3.62.5"
+    }
+}
