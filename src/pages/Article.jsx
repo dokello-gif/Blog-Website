@@ -4,15 +4,17 @@ import { motion, useScroll, useSpring } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, Heart, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { client, formatDate } from '../lib/sanity';
-import { getWritingBySlugQuery } from '../lib/queries';
+import { getWritingBySlugQuery, getRelatedWritingsQuery } from '../lib/queries';
 import SEO from '../components/SEO';
 import { ArticleSkeleton } from '../components/LoadingSkeleton';
 import toast from 'react-hot-toast';
 import AnimatedPage from '../components/AnimatedPage';
+import WritingCard from '../components/WritingCard';
 
 const Article = () => {
     const { id } = useParams();
     const [article, setArticle] = useState(null);
+    const [relatedWritings, setRelatedWritings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -30,9 +32,16 @@ const Article = () => {
             .then((data) => {
                 setArticle(data);
                 setLoading(false);
+
+                // Fetch related articles if we have a category
+                if (data?.category?.slug) {
+                    client.fetch(getRelatedWritingsQuery, {
+                        categorySlug: data.category.slug,
+                        currentId: data._id
+                    }).then(related => setRelatedWritings(related));
+                }
             })
             .catch((err) => {
-                console.error('Error fetching article:', err);
                 setError(err.message);
                 setLoading(false);
             });
@@ -91,6 +100,7 @@ const Article = () => {
                     title={article.title}
                     description={article.excerpt}
                     keywords={`creative writing, ${article.category?.title?.toLowerCase()}, ${article.title.toLowerCase()}`}
+                    image={article.featuredImage}
                 />
                 <div className="container mx-auto max-w-[700px]">
                     {/* Back Link */}
@@ -171,6 +181,27 @@ const Article = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Related Articles */}
+                {relatedWritings.length > 0 && (
+                    <div className="mt-24 pt-12 border-t border-charcoal/10">
+                        <h3 className="text-2xl font-bold font-heading text-charcoal mb-8">More Like This</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {relatedWritings.map((writing, index) => (
+                                <WritingCard
+                                    key={writing._id}
+                                    id={writing.slug}
+                                    title={writing.title}
+                                    excerpt={writing.excerpt}
+                                    category={writing.category?.title || 'Uncategorized'}
+                                    date={formatDate(writing.publishedAt)}
+                                    readTime={writing.readTime}
+                                    delay={index * 0.1}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </article>
         </AnimatedPage>
     );

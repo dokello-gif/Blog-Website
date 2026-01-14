@@ -57,3 +57,17 @@ export const searchWritingsQuery = `*[_type == "writing" && isPublished == true 
   readTime,
   engagement
 }`
+
+export const getRelatedWritingsQuery = `*[_type == "writing" && isPublished == true && category->slug.current == $categorySlug && _id != $currentId] | order(publishedAt desc)[0...3] {
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  category->{
+    title,
+    "slug": slug.current
+  },
+  publishedAt,
+  readTime,
+  featuredImage
+}`
