@@ -35,7 +35,7 @@ const categories = [
 
 const CategoryCards = () => {
     return (
-        <section className="py-20 px-6 bg-cream">
+        <section id="categories" className="py-20 px-6 bg-cream">
             <div className="container mx-auto max-w-[1200px]">
                 <h2 className="text-3xl md:text-4xl font-bold font-heading mb-12 text-charcoal">
                     Explore by Category

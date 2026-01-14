@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SearchOverlay from './SearchOverlay';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.hash === '#search') {
+            setIsSearchOpen(true);
+            // Optionally clear hash so it can be triggered again? 
+            // Better to leave it so back button works or reloading works.
+        }
+    }, [location.hash]);
 
     const navLinks = [
-        { name: 'All Stories', href: '/' },
+        { name: 'All Stories', href: '/#categories' },
         { name: 'Poetry', href: '/category/poetry' },
         { name: 'Blog Posts', href: '/category/blog' },
         { name: 'Essays', href: '/category/essays' },
@@ -17,12 +27,30 @@ const Header = () => {
         { name: 'Contact', href: '/contact' },
     ];
 
+    const handleLinkClick = (e, href) => {
+        if (href === '/#categories') {
+            e.preventDefault();
+            if (location.pathname === '/') {
+                const element = document.getElementById('categories');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                navigate('/#categories');
+            }
+        }
+    };
+
     return (
         <>
             <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-magenta/20 h-20">
                 <div className="container mx-auto px-6 h-full flex items-center justify-between max-w-[1200px]">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3 group">
+                    <Link
+                        to="/"
+                        className="flex items-center gap-3 group"
+                        onClick={() => window.scrollTo(0, 0)}
+                    >
                         <img
                             src="/logo.jpg"
                             alt="With David Logo"
@@ -37,6 +65,7 @@ const Header = () => {
                             <Link
                                 key={link.name}
                                 to={link.href}
+                                onClick={(e) => handleLinkClick(e, link.href)}
                                 className="text-base font-medium text-charcoal relative py-1 hover:text-cyan transition-colors duration-200 group"
                             >
                                 {link.name}

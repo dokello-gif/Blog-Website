@@ -52,7 +52,24 @@ const Hero = () => {
         }
     };
 
-    if (loading) return null;
+    if (loading) {
+        return (
+            <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-cream">
+                <div className="container mx-auto px-6 relative z-10">
+                    <div className="max-w-[1000px] mx-auto animate-pulse">
+                        <div className="h-8 w-48 bg-gray-200 rounded-full mb-8"></div>
+                        <div className="h-24 w-full bg-gray-200 rounded-3xl mb-4"></div>
+                        <div className="h-24 w-2/3 bg-gray-200 rounded-3xl mb-8"></div>
+                        <div className="h-6 w-full max-w-2xl bg-gray-200 rounded-xl mb-12"></div>
+                        <div className="flex gap-6">
+                            <div className="h-16 w-48 bg-gray-200 rounded-2xl"></div>
+                            <div className="h-16 w-48 bg-gray-200 rounded-2xl"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-cream">
@@ -143,7 +160,7 @@ const Hero = () => {
                     </div>
                 </motion.div>
             </div>
-        </section>
+        </section >
     );
 };
 
