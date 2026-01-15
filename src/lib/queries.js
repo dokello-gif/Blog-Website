@@ -13,6 +13,13 @@ export const getAllWritingsQuery = `*[_type == "writing" && isPublished == true]
   featuredImage
 }`
 
+export const getCategoriesWithCountQuery = `*[_type == "category"] {
+  "id": slug.current,
+  title,
+  "slug": slug.current,
+  "count": count(*[_type == "writing" && references(^._id) && isPublished == true])
+}`
+
 export const getWritingBySlugQuery = `*[_type == "writing" && slug.current == $slug][0] {
   _id,
   title,
